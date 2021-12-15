@@ -2,6 +2,9 @@
 import scrapy
 import datetime as dt
 
+from ..items import JobSearchProjectItem
+from scrapy.loader import ItemLoader
+
 
 class JobSearchSpider(scrapy.Spider):
     name = 'job_search'
@@ -41,5 +44,16 @@ class JobSearchSpider(scrapy.Spider):
                     callback=self.parse_job
                 )
 
-    def parse_job(self, response):
-        print(response)
+    @staticmethod
+    def parse_job(response):
+        l = ItemLoader(
+            item=JobSearchProjectItem(),
+            selector=response
+        )
+        l.add_css('title', '#titletextonly::text')
+        l.add_css('salary', 'span:nth-child(1) b::text')
+        l.add_css('timing', 'br+ span b::text')
+        l.add_css('communication', 'span:nth-child(5)::text')
+        l.add_css('job_posted', '#display-date .timeago::attr(datetime)')
+        l.add_value('job_url', response.url)
+        yield l.load_item()
