@@ -1,4 +1,6 @@
+
 import scrapy
+import datetime as dt
 
 
 class JobSearchSpider(scrapy.Spider):
@@ -21,4 +23,19 @@ class JobSearchSpider(scrapy.Spider):
             )
 
     def parse_search(self, response):
+        jobs = response.css('.result-row')
+        for job in jobs:
+            date = job.css('.result-date::attr(datetime)').get().strip()
+            job_date = dt.datetime.strptime(date, '%Y-%m-%d %H:%M')
+            filter_date = dt.datetime.now() - dt.timedelta(days=2.0)
+
+            if job_date >= filter_date:
+                job_url = job.css('.hdrlnk::attr(href)').get()
+
+                yield scrapy.Request(
+                    url=job_url,
+                    callback=self.parse_job
+                )
+
+    def parse_job(self, response):
         print(response)
