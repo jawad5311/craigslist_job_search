@@ -11,15 +11,13 @@ import copy
 from colorlog import ColoredFormatter
 import scrapy.utils.log
 
-
 BOT_NAME = 'job_search_project'
 
 SPIDER_MODULES = ['job_search_project.spiders']
 NEWSPIDER_MODULE = 'job_search_project.spiders'
 
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'job_search_project (+http://www.yourdomain.com)'
+# USER_AGENT = 'job_search_project (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -32,65 +30,79 @@ CONCURRENT_REQUESTS = 3
 # See also autothrottle settings and docs
 DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
-#CONCURRENT_REQUESTS_PER_DOMAIN = 16
-#CONCURRENT_REQUESTS_PER_IP = 16
+# CONCURRENT_REQUESTS_PER_DOMAIN = 16
+# CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+# COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
-#TELNETCONSOLE_ENABLED = False
+# TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-#DEFAULT_REQUEST_HEADERS = {
+# DEFAULT_REQUEST_HEADERS = {
 #   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 #   'Accept-Language': 'en',
-#}
+# }
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
+# SPIDER_MIDDLEWARES = {
 #    'job_search_project.middlewares.JobSearchProjectSpiderMiddleware': 543,
-#}
+# }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'job_search_project.middlewares.JobSearchProjectDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    # 'job_search_project.middlewares.JobSearchProjectDownloaderMiddleware': 543,
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+    'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
+    'scrapy_fake_useragent.middleware.RetryUserAgentMiddleware': 401,
+}
+
+# Fake User-Agent Recommended setting (1.3.0+):
+FAKEUSERAGENT_PROVIDERS = [
+    'scrapy_fake_useragent.providers.FakeUserAgentProvider',  # this is the first provider we'll try
+    'scrapy_fake_useragent.providers.FakerProvider',
+    # if FakeUserAgentProvider fails, we'll use faker to generate a user-agent string for us
+    'scrapy_fake_useragent.providers.FixedUserAgentProvider',  # fall back to USER_AGENT value
+]
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 ' \
+             'Safari/537.36 '
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-#EXTENSIONS = {
+# EXTENSIONS = {
 #    'scrapy.extensions.telnet.TelnetConsole': None,
-#}
+# }
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
+# ITEM_PIPELINES = {
 #    'job_search_project.pipelines.JobSearchProjectPipeline': 300,
-#}
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
 AUTOTHROTTLE_ENABLED = True
 # The initial download delay
-#AUTOTHROTTLE_START_DELAY = 5
+# AUTOTHROTTLE_START_DELAY = 5
 # The maximum download delay to be set in case of high latencies
-#AUTOTHROTTLE_MAX_DELAY = 60
+# AUTOTHROTTLE_MAX_DELAY = 60
 # The average number of requests Scrapy should be sending in parallel to
 # each remote server
-#AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
+# AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
 # Enable showing throttling stats for every response received:
-#AUTOTHROTTLE_DEBUG = False
+# AUTOTHROTTLE_DEBUG = False
 
 # Enable and configure HTTP caching (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
 HTTPCACHE_ENABLED = True
-#HTTPCACHE_EXPIRATION_SECS = 0
-#HTTPCACHE_DIR = 'httpcache'
+# HTTPCACHE_EXPIRATION_SECS = 0
+# HTTPCACHE_DIR = 'httpcache'
 HTTPCACHE_IGNORE_HTTP_CODES = [503, 504, 505, 500, 400, 401, 402, 403, 404]
-#HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+# HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 
 # Color Log settings
